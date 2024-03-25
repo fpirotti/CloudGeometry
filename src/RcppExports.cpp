@@ -10,21 +10,21 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// convolveCpp
-NumericVector convolveCpp(NumericVector a, NumericVector b);
-RcppExport SEXP _CloudGeometry_convolveCpp(SEXP aSEXP, SEXP bSEXP) {
+// geometricFeaturesCalculate
+NumericVector geometricFeaturesCalculate(NumericVector a, bool progbar);
+RcppExport SEXP _CloudGeometry_geometricFeaturesCalculate(SEXP aSEXP, SEXP progbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type a(aSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type b(bSEXP);
-    rcpp_result_gen = Rcpp::wrap(convolveCpp(a, b));
+    Rcpp::traits::input_parameter< bool >::type progbar(progbarSEXP);
+    rcpp_result_gen = Rcpp::wrap(geometricFeaturesCalculate(a, progbar));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_CloudGeometry_convolveCpp", (DL_FUNC) &_CloudGeometry_convolveCpp, 2},
+    {"_CloudGeometry_geometricFeaturesCalculate", (DL_FUNC) &_CloudGeometry_geometricFeaturesCalculate, 2},
     {NULL, NULL, 0}
 };
 

@@ -1,13 +1,23 @@
 #include <Rcpp.h>
+#include <RProgress.h>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector convolveCpp(NumericVector a, NumericVector b) {
-  int na = a.size(), nb = b.size();
-  int nab = na + nb - 1;
-  NumericVector xab(nab);
-  for (int i = 0; i < na; i++)
-    for (int j = 0; j < nb; j++)
-      xab[i + j] += a[i] * b[j];
+NumericVector geometricFeaturesCalculate(NumericVector a, bool progbar) {
+  int na = a.size();
+  NumericVector xab(na);
+
+  RProgress::RProgress pb("Working... [:bar] ETA: :eta");
+  if(progbar) {
+    pb.set_total(na);
+  }
+
+  for (int i = 0; i < na; i++){
+    Rcpp::checkUserInterrupt();
+    if(progbar) {
+      //Rcout << "  i=" <<  i << " j=" <<  " - " << std::endl;
+      pb.tick();
+    }
+  }
   return xab;
 }
