@@ -1,0 +1,20 @@
+Package: CloudGeometry
+Title: Mapping Physiological Equivalent Temperature
+Version: 0.1.0
+Authors@R: person(given = "Francesco",
+           family = "Pirotti",
+           role = c("aut", "cre"),
+           email = "francesco.pirotti@unipd.it",
+           comment = c(ORCID = "0000-0002-4796-6406") ) 
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: CC BY 4.0
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+LinkingTo: 
+    Rcpp
+Imports: 
+    Rcpp
