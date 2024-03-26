@@ -11,14 +11,14 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // geometricFeaturesCalculate
-NumericVector geometricFeaturesCalculate(NumericVector a, bool progbar);
-RcppExport SEXP _CloudGeometry_geometricFeaturesCalculate(SEXP aSEXP, SEXP progbarSEXP) {
+NumericMatrix geometricFeaturesCalculate(NumericMatrix x, bool progbar);
+RcppExport SEXP _CloudGeometry_geometricFeaturesCalculate(SEXP xSEXP, SEXP progbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type a(aSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
     Rcpp::traits::input_parameter< bool >::type progbar(progbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(geometricFeaturesCalculate(a, progbar));
+    rcpp_result_gen = Rcpp::wrap(geometricFeaturesCalculate(x, progbar));
     return rcpp_result_gen;
 END_RCPP
 }
