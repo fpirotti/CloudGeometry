@@ -4,11 +4,13 @@
 \alias{calculateGeometricFeatures}
 \title{calculateGeometricFeatures}
 \usage{
-calculateGeometricFeatures(inMatrix, progress = T)
+calculateGeometricFeatures(inMatrix, radius = 1, progress = T)
 }
 \arguments{
 \item{inMatrix}{a matrix with columns of X Y Z coordinates,
 and rows of observations}
+
+\item{radius}{maximum radius for which to find nearest neighbours}
 
 \item{progress}{a logical boolean - if true a progress bar
 will be shown}
@@ -20,5 +22,5 @@ matrix with geometric features
 calculateGeometricFeatures
 }
 \examples{
-#calculateGeometricFeatures(matrix(1:12, ncol = 3, nrow = 4), TRUE)
+calculateGeometricFeatures(lidar,5, TRUE)
 }
