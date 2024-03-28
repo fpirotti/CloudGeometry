@@ -27,7 +27,7 @@ arma::vec getEigen(arma::mat M) {
 
 
 // [[Rcpp::export]]
-arma::mat  geometricFeaturesCalculate(arma::mat&  x,
+arma::mat  geometricFeaturesCalculate(arma::mat const &x,
                                       arma::mat& ids,
                                       bool progbar) {
 
@@ -41,7 +41,7 @@ arma::mat  geometricFeaturesCalculate(arma::mat&  x,
 //
 //   // NumericVector out = no_init(nCols);
 
-  Rcpp::NumericMatrix out( nRows, 6  );
+  arma::mat out( nRows, 3  );
 
 //
 //
@@ -49,15 +49,16 @@ arma::mat  geometricFeaturesCalculate(arma::mat&  x,
 arma::uvec indices;
 arma::mat result;
 arma::uvec res;
+arma::vec eigen;
 
 
 for (int idr=0; idr<ids.n_rows;idr++) {
 
   arma::rowvec rowids = ids.row(idr) ;
   arma::vec indices = rowids.elem( find(rowids > 0 ) );
-
   arma::mat subset(indices.size(), 3, arma::fill::zeros );
   int count=0;
+
   for(arma::vec::iterator i = indices.begin(); i != indices.end(); ++i){
     int id = *i;
     id--; //this is for 0-based vs 1-based
@@ -68,26 +69,11 @@ for (int idr=0; idr<ids.n_rows;idr++) {
     count++;
   }
 
-  //res = getEigen(subset);
-  // Rcpp::NumericMatrix::Row tmp = x(1, _);
-  // Rcout << "  i=" <<  ids.row(idr) <<  " - " << std::endl;
-  Rcout << "  i=" <<  subset <<  " - " << std::endl;
-  // Rcout << "  i=" <<  subset <<  " - " << std::endl;
-  break;
-  // arma::mat mat;
+  out.row(idr) = getEigen(cov(subset));
+  // Rcout << "  i=" <<   <<  " - " << std::endl;
 
-   // for (int i=0; i<nRows;i++) {
-   //   Rcpp::NumericMatrix::Row tmp = x(i,_);
-   //   if(i%counter == 0){
-   //   Rcpp::checkUserInterrupt();
-   //   if(progbar) {
-   //      // Rcout << "  i=" <<  i << " j=" << nRows <<  " - " << std::endl;
-   //      pb.tick();
-   //    }
-   //  }
-   // }
 
   }
 
-  return result  ;
+  return out  ;
 }
