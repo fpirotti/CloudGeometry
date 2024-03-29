@@ -19,11 +19,6 @@ enum feature { PCA1 = 1,
 
 
 
-// [[Rcpp::depends(RcppArmadillo)]]
-// [[Rcpp::export]]
-arma::vec getEigen(arma::mat M) {
-  return arma::eig_sym(M);
-}
 
 
 // [[Rcpp::export]]
@@ -33,6 +28,7 @@ arma::mat  geometricFeaturesCalculate(arma::mat const &x,
 
   int nRows = x.n_rows;
   int counter = (int)(ceil(nRows / 100.0f + 1.0f));
+
   RProgress::RProgress pb("Working... [:bar] ETA: :eta");
   if(progbar) {
     pb.set_total(nRows);
@@ -41,7 +37,7 @@ arma::mat  geometricFeaturesCalculate(arma::mat const &x,
 //
 //   // NumericVector out = no_init(nCols);
 
-  arma::mat out( nRows, 3  );
+  arma::mat out(  3, nRows  );
 
 //
 //
@@ -49,13 +45,18 @@ arma::mat  geometricFeaturesCalculate(arma::mat const &x,
 arma::uvec indices;
 arma::mat result;
 arma::uvec res;
-arma::vec eigen;
+arma::vec eigval;
 
 
 for (int idr=0; idr<ids.n_rows;idr++) {
 
   arma::rowvec rowids = ids.row(idr) ;
   arma::vec indices = rowids.elem( find(rowids > 0 ) );
+  // at least ten neighbours?
+  if(indices.size()<10){
+    continue;
+  }
+
   arma::mat subset(indices.size(), 3, arma::fill::zeros );
   int count=0;
 
@@ -69,8 +70,10 @@ for (int idr=0; idr<ids.n_rows;idr++) {
     count++;
   }
 
-  out.row(idr) = getEigen(cov(subset));
-  // Rcout << "  i=" <<   <<  " - " << std::endl;
+
+  eig_sym(eigval,  cov(subset));
+
+  out.col(idr) = eigval; // (arma::arg(eigval));
 
 
   }

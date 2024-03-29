@@ -11,24 +11,13 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// getEigen
-arma::vec getEigen(arma::mat M);
-RcppExport SEXP _CloudGeometry_getEigen(SEXP MSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(getEigen(M));
-    return rcpp_result_gen;
-END_RCPP
-}
 // geometricFeaturesCalculate
-arma::mat geometricFeaturesCalculate(arma::mat& x, arma::mat& ids, bool progbar);
+arma::mat geometricFeaturesCalculate(arma::mat const& x, arma::mat& ids, bool progbar);
 RcppExport SEXP _CloudGeometry_geometricFeaturesCalculate(SEXP xSEXP, SEXP idsSEXP, SEXP progbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type x(xSEXP);
     Rcpp::traits::input_parameter< arma::mat& >::type ids(idsSEXP);
     Rcpp::traits::input_parameter< bool >::type progbar(progbarSEXP);
     rcpp_result_gen = Rcpp::wrap(geometricFeaturesCalculate(x, ids, progbar));
@@ -37,7 +26,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_CloudGeometry_getEigen", (DL_FUNC) &_CloudGeometry_getEigen, 1},
     {"_CloudGeometry_geometricFeaturesCalculate", (DL_FUNC) &_CloudGeometry_geometricFeaturesCalculate, 3},
     {NULL, NULL, 0}
 };

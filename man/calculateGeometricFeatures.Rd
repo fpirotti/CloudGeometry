@@ -4,13 +4,14 @@
 \alias{calculateGeometricFeatures}
 \title{calculateGeometricFeatures}
 \usage{
-calculateGeometricFeatures(inMatrix, radius = 1, progress = T)
+calculateGeometricFeatures(inMatrix, idx, progress = T)
 }
 \arguments{
 \item{inMatrix}{a matrix with columns of X Y Z coordinates,
-and rows of observations}
+and rows of observations, so M rows and 3 columns}
 
-\item{radius}{maximum radius for which to find nearest neighbours}
+\item{idx}{a matrix with nearest neighbour indices of the inMatrix cloud,
+so M x N where N is the number of nearest neighbours (k value in RANN library)}
 
 \item{progress}{a logical boolean - if true a progress bar
 will be shown}
@@ -22,5 +23,6 @@ matrix with geometric features
 calculateGeometricFeatures
 }
 \examples{
-calculateGeometricFeatures(lidar,5, TRUE)
+nn <- calculateNeighboursIDX(lidar[1:100,],5, TRUE)
+nf <- calculateGeometricFeatures(lidar[1:100,],nn, TRUE)
 }
