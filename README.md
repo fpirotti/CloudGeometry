@@ -4,11 +4,20 @@
 
 <!-- badges: end -->
 
-The goal of CloudGeometry is to comput geometric features for each point in a point cloud based on a local neighbourhood around each point with user-defined radius.
+The goal of CloudGeometry is to compute geometric features for each point in a point cloud. 
 
-Geometric features are used to describe a point neighbourhood and are widely used to increase the number of features that describe the 3D scene  [[Weinmann et al. 2015]](#1). This can be used as descriptors in training machine learning models for segmentation and classification.
+Geometric features catch geometrical patterns around a certain position in 3D space
+based on information available from the neighbouring points (local neighborhood).
 
-The following
+Geometrical patterns can be described using the eigenvalues of thge 
+3D structure tensor  represented by the 3D covariance matrix derived from the 3D coordinates of all points within the local neighborhood 
+[Weinmann et al. 2015](#1).
+
+Due to the the expected large volume of points in point clouds that are surveyed with laser scanners or created by photogrammetric inputs, this package uses a fast implementation using [Armadillo C++ library for linear algebra & scientific computing](https://arma.sourceforge.net/).
+
+Geometric features are used to describe a point neighbourhood and are widely used to increase the number of features that describe the 3D scene . This can be used as descriptors in training machine learning models for segmentation and classification.
+
+The following geometric features are currently implemented:
 
 -   1st eigenvalue
 
@@ -38,6 +47,7 @@ The following
 
 -   Verticality
 
+
 ## Installation
 
 You can install the development version of CloudGeometry from [GitHub](https://github.com/) with:
@@ -52,8 +62,12 @@ devtools::install_github("fpirotti/CloudGeometry")
 This is a basic example which shows you how to process a lidar point cloud:
 
 ``` r
-library(CloudGeometry)
+
 ## basic example code
+
+library(CloudGeometry)
+gf <- calculateGeometricFeatures(lidar, 3 TRUE)
+
 ```
 
 ![](images/clipboard-3962452338.png)

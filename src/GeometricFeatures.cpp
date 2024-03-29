@@ -31,7 +31,7 @@ arma::mat  geometricFeaturesCalculate(arma::mat const &x,
 
   RProgress::RProgress pb("Working... [:bar] ETA: :eta");
   if(progbar) {
-    pb.set_total(nRows);
+    pb.set_total(100);
   }
 //
 //
@@ -50,6 +50,9 @@ arma::vec eigval;
 
 for (int idr=0; idr<ids.n_rows;idr++) {
 
+  if(idr%counter==0){
+    pb.tick();
+  }
   arma::rowvec rowids = ids.row(idr) ;
   arma::vec indices = rowids.elem( find(rowids > 0 ) );
   // at least ten neighbours?

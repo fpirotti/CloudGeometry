@@ -2,27 +2,26 @@
 % Please edit documentation in R/calculateGeometricFeatures.R
 \name{calculateGeometricFeatures}
 \alias{calculateGeometricFeatures}
-\title{calculateGeometricFeatures}
+\title{calculateNeighboursIDX}
 \usage{
-calculateGeometricFeatures(inMatrix, idx, progress = T)
+calculateGeometricFeatures(inMatrix, radius = 1, progress = TRUE)
 }
 \arguments{
 \item{inMatrix}{a matrix with columns of X Y Z coordinates,
 and rows of observations, so M rows and 3 columns}
 
-\item{idx}{a matrix with nearest neighbour indices of the inMatrix cloud,
-so M x N where N is the number of nearest neighbours (k value in RANN library)}
+\item{radius}{maximum radius for which to find nearest neighbours}
 
 \item{progress}{a logical boolean - if true a progress bar
 will be shown}
 }
 \value{
-matrix with geometric features
+integer matrix with id values M x 100 (k=100) which is the
+number of nearest neighbours
 }
 \description{
-calculateGeometricFeatures
+calculateNeighboursIDX
 }
 \examples{
-nn <- calculateNeighboursIDX(lidar[1:100,],5, TRUE)
-nf <- calculateGeometricFeatures(lidar[1:100,],nn, TRUE)
+#nf <- calculateGeometricFeatures(lidar[1:100,],5, TRUE)
 }
