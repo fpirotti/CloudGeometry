@@ -1,7 +1,3 @@
----
-bibliography: references.bib
----
-
 # CloudGeometry
 
 <!-- badges: start -->
@@ -10,7 +6,7 @@ bibliography: references.bib
 
 The goal of CloudGeometry is to comput geometric features for each point in a point cloud based on a local neighbourhood around each point with user-defined radius.
 
-Geometric features are used to describe a point neighbourhood and are widely used to increase the number of features that describe the 3D scene [@weinmann2015]. This can be used as descriptors in training machine learning models for segmentation and classification.
+Geometric features are used to describe a point neighbourhood and are widely used to increase the number of features that describe the 3D scene  [[Weinmann et al. 2015]](#1). This can be used as descriptors in training machine learning models for segmentation and classification.
 
 The following
 
@@ -61,3 +57,10 @@ library(CloudGeometry)
 ```
 
 ![](images/clipboard-3962452338.png)
+
+
+<a id="1">[1]</a>   Weinmann, M., Jutzi, B., Hinz, S., Mallet, C., 2015. Semantic
+point cloud interpretation based on optimal neighborhoods,
+relevant features and efficient classifiers. ISPRS J. Photogramm.
+Remote Sens. 105, 286–304.
+https://doi.org/10.1016/j.isprsjprs.2015.01.016
