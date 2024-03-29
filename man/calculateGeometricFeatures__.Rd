@@ -23,6 +23,7 @@ matrix with geometric features
 calculateGeometricFeatures__
 }
 \examples{
+#subset the first 100 rows of the lidar point cloud example to limit execution time.
 nn <- calculateNeighboursIDX(lidar[1:100,],5, TRUE)
-nf <- calculateGeometricFeatures(lidar[1:100,],nn, TRUE)
+nf <- calculateGeometricFeatures__(lidar[1:100,],nn, TRUE)
 }

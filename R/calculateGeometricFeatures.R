@@ -16,7 +16,9 @@ NULL
 #' @importFrom RANN nn2
 #' @export
 #'
-#' @examples #nf <- calculateGeometricFeatures(lidar[1:100,],5, TRUE)
+#' @examples #subset the first 100 rows of the lidar point cloud example to limit execution time.
+#'
+#' nf <- calculateNeighboursIDX(lidar[1:100,],5, TRUE)
 calculateNeighboursIDX <- function(inMatrix, radius=1,  progress=T){
   rr<-RANN::nn2(inMatrix, k=100,  searchtype='radius',  radius = radius)
   rr$nn.idx[rr$nn.idx==0]<-NA
@@ -37,9 +39,9 @@ calculateNeighboursIDX <- function(inMatrix, radius=1,  progress=T){
 #' @import RcppArmadillo
 #' @export
 #'
-#' @examples
+#' @examples #subset the first 100 rows of the lidar point cloud example to limit execution time.
 #' nn <- calculateNeighboursIDX(lidar[1:100,],5, TRUE)
-#' nf <- calculateGeometricFeatures(lidar[1:100,],nn, TRUE)
+#' nf <- calculateGeometricFeatures__(lidar[1:100,],nn, TRUE)
 calculateGeometricFeatures__ <- function(inMatrix, idx,  progress=T){
   if(nrow(inMatrix)!=nrow(idx)){
     stop("Number of rows in matrix with XYZ and in matrix
@@ -64,7 +66,8 @@ calculateGeometricFeatures__ <- function(inMatrix, idx,  progress=T){
 #' @importFrom RANN nn2
 #' @export
 #'
-#' @examples #nf <- calculateGeometricFeatures(lidar,5, TRUE)
+#' @examples #subset the first 100 rows of the lidar point cloud example to limit execution time.
+#' nf <- calculateGeometricFeatures(lidar[1:100,],5, TRUE)
 calculateGeometricFeatures <- function(inMatrix, radius=1,  progress=TRUE){
   NN <- calculateNeighboursIDX(inMatrix, radius, progress)
   calculateGeometricFeatures__(inMatrix = inMatrix, idx = NN, progress=progress)

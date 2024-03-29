@@ -23,5 +23,7 @@ number of nearest neighbours
 calculateNeighboursIDX
 }
 \examples{
-#nf <- calculateGeometricFeatures(lidar[1:100,],5, TRUE)
+#subset the first 100 rows of the lidar point cloud example to limit execution time.
+
+nf <- calculateNeighboursIDX(lidar[1:100,],5, TRUE)
 }
