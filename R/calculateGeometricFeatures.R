@@ -43,7 +43,6 @@ calcEigen <- function(pc3d, radius=1,  progress=T, threads=0){
   pc3d[,2] <- pc3d[,2] - min(pc3d[,2])
   nnEigen(pc3d,  radius = radius,  progbar=progress, threads=threads)
 
-
 }
 
 #' calcGF
@@ -66,6 +65,7 @@ calcEigen <- function(pc3d, radius=1,  progress=T, threads=0){
 #'
 #' @examples #subset the first 100 rows of the lidar point cloud example to limit execution time.
 #' nn <- calcGF(lidar[1:100,],5, TRUE)
+#'
 calcGF <- function(pc3d, radius=1,  progress=T, threads=0){
   if(nrow(pc3d)<4){
     stop("Number of rows in matrix are too few: ",
@@ -79,5 +79,25 @@ calcGF <- function(pc3d, radius=1,  progress=T, threads=0){
 
   ne<-nnEigen(pc3d,  radius = radius,  progbar=progress, threads=threads)
 
+  eigenSum = rowSums(ne)
+
+  gf <- data.frame(
+    eigenValue1 = ne[1,],
+    eigenValue2 = ne[2,],
+    eigenValue3 = ne[3,],
+    eigenSum = eigenSum,
+    linearity = (ne[1,] - ne[2,]) / ne[1,],
+    planarity  = (ne[2,] - ne[3,]) / ne[1,],
+    sphericity = ne[3,] / ne[1,],
+    omnivariance =  (ne[1,] * ne[2,] *  ne[3,])^(1/3),
+    anisotropy   =  (ne[1,] - ne[3,]) / ne[1,],
+    change_of_curvature   =  ne[3,] / eigenSum
+  )
+
+  gf
 
 }
+
+
+
+

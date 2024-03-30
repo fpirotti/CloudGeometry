@@ -108,12 +108,10 @@ arma::mat  nnEigen(arma::mat const &x,
 
   Rcout << "Finished the tree with size=" << tree.allnodes.size() << " nodes\n";
 
-  std::string mst("Searchin NN with radius ");
+  std::string mst("Searching NN with radius ");
   mst = mst.append( std::to_string( radius ) );
-  mst = mst.append("... [:bar] ETA: :eta");
   // RProgress::RProgress pb2(mst);
 
-  Progress p(nRows, true);
   Rcout << mst << " \n";
 
   arma::vec eigval;
@@ -126,13 +124,16 @@ arma::mat  nnEigen(arma::mat const &x,
     REprintf("\nNumber of threads requested=%i\n", threads);
   } else {
     int nt = omp_get_max_threads();
+    int nto = nt;
     if(nt>4) nt = nt - 2 ;
     omp_set_num_threads( nt );
-    REprintf("\nNo specific number of threads requested, will use all available threads - 2 (%i of %i)\n", nt, omp_get_max_threads());
+    REprintf("\nNo specific number of threads requested, will use all available threads - 2 (%i of %i)\n", nt, nto);
   }
 
 #endif
 
+
+Progress p(nRows, true);
 
 #pragma omp parallel for schedule(dynamic)
   for ( idr=0; idr<nRows;idr++) {
@@ -144,10 +145,12 @@ arma::mat  nnEigen(arma::mat const &x,
     }
   }
 
+  p.cleanup();
   if(noNoNeighbours>0){
-    Rcpp::warning( std::to_string(noNoNeighbours).append(" points have only  3 or less neighbours so NaN was assigned to eigenvalues ... you might want to consider increasing your radius") );
+    Rcpp::Rcout << "\n" << std::to_string(noNoNeighbours).append(" points have only  3 or less neighbours so NaN was assigned to eigenvalues ... you might want to consider increasing your radius\n\n");
   }
 
   return out;
+
 }
 
