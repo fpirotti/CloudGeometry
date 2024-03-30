@@ -67,10 +67,12 @@ calcEigen <- function(pc3d, radius=1,  progress=T, threads=0){
 #' nn <- calcGF(lidar[1:100,],5, TRUE)
 #'
 calcGF <- function(pc3d, radius=1,  progress=T, threads=0){
+
   if(nrow(pc3d)<4){
     stop("Number of rows in matrix are too few: ",
          nrow(pc3d),  " found.")
   }
+
   if(ncol(pc3d)!=3){
     stop("There should be three  columns in matrix,
          with XYZ coordinates. Your matrix has ",
@@ -78,21 +80,25 @@ calcGF <- function(pc3d, radius=1,  progress=T, threads=0){
   }
 
   ne<-nnEigen(pc3d,  radius = radius,  progbar=progress, threads=threads)
+  if(nrow(ne)>0){
+    eigenSum = rowSums(ne)
+    gf <- data.frame(
+      eigenValue1 = ne[,1],
+      eigenValue2 = ne[,2],
+      eigenValue3 = ne[,3],
+      eigenSum = eigenSum,
+      linearity = (ne[,1] - ne[,2]) / ne[,1],
+      planarity  = (ne[,2] - ne[,3]) / ne[,1],
+      sphericity = ne[,3] / ne[,1],
+      omnivariance =  (ne[,1] * ne[,2] *  ne[,3])^(1/3),
+      anisotropy   =  (ne[,1] - ne[,3]) / ne[,1],
+      change_of_curvature   =  ne[,3] / eigenSum
+    )
+  } else {
+    message("No rows, maybe interrupted by user?")
+    gf <- NA
+  }
 
-  eigenSum = rowSums(ne)
-
-  gf <- data.frame(
-    eigenValue1 = ne[1,],
-    eigenValue2 = ne[2,],
-    eigenValue3 = ne[3,],
-    eigenSum = eigenSum,
-    linearity = (ne[1,] - ne[2,]) / ne[1,],
-    planarity  = (ne[2,] - ne[3,]) / ne[1,],
-    sphericity = ne[3,] / ne[1,],
-    omnivariance =  (ne[1,] * ne[2,] *  ne[3,])^(1/3),
-    anisotropy   =  (ne[1,] - ne[3,]) / ne[1,],
-    change_of_curvature   =  ne[3,] / eigenSum
-  )
 
   gf
 

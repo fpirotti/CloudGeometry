@@ -19,7 +19,6 @@ using namespace arma;
 
 
 // [[Rcpp::depends(RcppProgress)]]
-// [[Rcpp::depends(RcppProgress)]]
 int  nn(int idr,
               double radius,
               arma::mat const &x,
@@ -59,7 +58,6 @@ Kdtree::KdNodeVector cTree(arma::mat const &x,
 
   int nRows = x.n_rows;
 
-  Rcout << "Starting the tree2 " << nRows << "\n";
   int counter = (int)(ceil(nRows / 100.0f + 1.0f));
 
   Progress p(nRows, true);
@@ -97,22 +95,25 @@ arma::mat  nnEigen(arma::mat const &x,
   out.fill(datum::nan);
 
   if(nRows < 4){
-    Rcpp::stop(std::to_string(nRows).append(" points in table, not enough...") );
+    out.clear();
     return(out);
   }
 
   int counter = (int)(ceil(nRows / 100.0f + 1.0f));
 
   Kdtree::KdNodeVector a = cTree(x, progbar);
+
+  REprintf("Creating tree with %d nodes\n", a.size() );
   Kdtree::KdTree tree(&a);
 
-  Rcout << "Finished the tree with size=" << tree.allnodes.size() << " nodes\n";
+  if(tree.allnodes.size()==0){
+    REprintf("Stopped by user\n" );
+    out.clear();
+    return(out);
+  }
 
-  std::string mst("Searching NN with radius ");
-  mst = mst.append( std::to_string( radius ) );
-  // RProgress::RProgress pb2(mst);
-
-  Rcout << mst << " \n";
+  REprintf("Finished tree with %d nodes\n", tree.allnodes.size() );
+  REprintf("Searching NN with radius of %.3f ... ", radius );
 
   arma::vec eigval;
   Kdtree::KdNode node;
@@ -121,13 +122,13 @@ arma::mat  nnEigen(arma::mat const &x,
 #ifdef _OPENMP
   if ( threads > 0 ){
     omp_set_num_threads( threads );
-    REprintf("\nNumber of threads requested=%i\n", threads);
+    REprintf(" with number of threads = %i as requested.\n", threads);
   } else {
     int nt = omp_get_max_threads();
     int nto = nt;
     if(nt>4) nt = nt - 2 ;
     omp_set_num_threads( nt );
-    REprintf("\nNo specific number of threads requested, will use all available threads - 2 (%i of %i)\n", nt, nto);
+    REprintf(" with no specific number of threads requested, will use most of available threads (%i of %i)\n", nt, nto);
   }
 
 #endif
@@ -147,8 +148,9 @@ Progress p(nRows, true);
 
   p.cleanup();
   if(noNoNeighbours>0){
-    Rcpp::Rcout << "\n" << std::to_string(noNoNeighbours).append(" points have only  3 or less neighbours so NaN was assigned to eigenvalues ... you might want to consider increasing your radius\n\n");
-  }
+    REprintf("%d points out of %d have only 3 or less neighbours so NaN was assigned to eigenvalues ... you might want to consider increasing your radius\n",
+             noNoNeighbours, out.n_rows );
+   }
 
   return out;
 

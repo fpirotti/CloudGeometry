@@ -199,7 +199,11 @@ KdTree::KdTree(const KdNodeVector* nodes, int distance_type /*=2*/) {
     }
   }
   // build tree recursively
+  p = new Progress(allnodes.size(), true);
+  // Progress p(allnodes.size(), true);
+  p->increment();
   root = build_tree(0, 0, allnodes.size());
+
 }
 
 // distance_type can be 0 (Maximum), 1 (Manhatten), or 2 (Euklidean [squared])
@@ -227,6 +231,13 @@ kdtree_node* KdTree::build_tree(size_t depth, size_t a, size_t b) {
   kdtree_node* node = new kdtree_node();
   node->lobound = lobound;
   node->upbound = upbound;
+  p->increment();
+
+  if ( Progress::check_abort() ){
+    allnodes.clear();
+    return 0;
+  }
+
   node->cutdim = depth % dimension;
   if (b - a <= 1) {
     node->dataindex = a;

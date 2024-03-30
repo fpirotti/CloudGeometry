@@ -16,6 +16,10 @@
 #include <queue>
 #include <vector>
 
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+
+
 namespace Kdtree {
 
 typedef std::vector<double> CoordPoint;
@@ -90,6 +94,7 @@ private:
   DistanceMeasure* distance;
   // search predicate in knn searches
   KdNodePredicate* searchpredicate;
+  Progress *p;
 
 public:
   KdNodeVector allnodes;
