@@ -1,74 +1,43 @@
 ## usethis namespace: start
 #' @useDynLib CloudGeometry, .registration = TRUE
 #' @importFrom Rcpp evalCpp sourceCpp
+#' @export
 ## usethis namespace: end
 NULL
 
-#' calculateNeighboursIDX
+
+#' calcGF
+#' @description Calculate Geometric Features
 #'
 #' @param inMatrix a matrix with columns of X Y Z coordinates,
 #' and rows of observations, so M rows and 3 columns
 #' @param  radius maximum radius for which to find nearest neighbours
-#' @param progress a logical boolean - if true a progress bar
+#' @param progress a logical bolean - if true a progress bar
 #' will be shown
-#' @return integer matrix with id values M x 100 (k=100) which is the
-#' number of nearest neighbours
-#' @importFrom RANN nn2
-#' @export
-#'
-#' @examples #subset the first 100 rows of the lidar point cloud example to limit execution time.
-#'
-#' nf <- calculateNeighboursIDX(lidar[1:100,],5, TRUE)
-calculateNeighboursIDX <- function(inMatrix, radius=1,  progress=T){
-  rr<-RANN::nn2(inMatrix, k=100,  searchtype='radius',  radius = radius)
-  rr$nn.idx[rr$nn.idx==0]<-NA
-  rr$nn.idx
-}
-
-
-#' calculateGeometricFeatures__
-#'
-#' @param inMatrix a matrix with columns of X Y Z coordinates,
-#' and rows of observations, so M rows and 3 columns
-#' @param  idx a matrix with nearest neighbour indices of the inMatrix cloud,
-#' so M x N where N is the number of nearest neighbours (k value in RANN library)
-#' @param progress a logical boolean - if true a progress bar
-#' will be shown
-#' @return matrix with geometric features
+#' @param threads number of threads. If zero (default) is set, it will use t-2,
+#' i.e. all threads except 2 if machine has more than 4 threads. Only works if
+#' CloudGeometry was build with OpenMP support (see documentation)
+#' @return matrix with M rows and 3 columns with the geometric
+#' features (3 eigen values in ascending order)
 #' @importFrom Rcpp evalCpp
 #' @import RcppArmadillo
+#' @import RcppProgress
 #' @export
 #'
 #' @examples #subset the first 100 rows of the lidar point cloud example to limit execution time.
-#' nn <- calculateNeighboursIDX(lidar[1:100,],5, TRUE)
-#' nf <- calculateGeometricFeatures__(lidar[1:100,],nn, TRUE)
-calculateGeometricFeatures__ <- function(inMatrix, idx,  progress=T){
-  if(nrow(inMatrix)!=nrow(idx)){
-    stop("Number of rows in matrix with XYZ and in matrix
-         with nearest neighbours ids do not match!  inMatrix=",
-         nrow(inMatrix),  " vs idx=",
-         nrow(idx) )
+#' nn <- calcGF(lidar[1:100,],5, TRUE)
+calcGF <- function(inMatrix, radius=1,  progress=T, threads=0){
+  if(nrow(inMatrix)<4){
+    stop("Number of rows in matrix are too few: ",
+         nrow(inMatrix),  " found.")
   }
-  geometricFeaturesCalculate(inMatrix, idx, progress)
+  if(ncol(inMatrix)!=3){
+    stop("There should be three  columns in matrix, with XYZ coordinates. Your matrix has ", ncol(inMatrix), " columns.")
+  }
+  message("Starting eigan with radius=", radius, " and ", threads, " threads.")
+  nnEigen(inMatrix,  radius = radius,  progbar=progress, threads=threads)
+
+
 }
 
 
-
-#' calculateNeighboursIDX
-#'
-#' @param inMatrix a matrix with columns of X Y Z coordinates,
-#' and rows of observations, so M rows and 3 columns
-#' @param  radius maximum radius for which to find nearest neighbours
-#' @param progress a logical boolean - if true a progress bar
-#' will be shown
-#' @return integer matrix with id values M x 100 (k=100) which is the
-#' number of nearest neighbours
-#' @importFrom RANN nn2
-#' @export
-#'
-#' @examples #subset the first 100 rows of the lidar point cloud example to limit execution time.
-#' nf <- calculateGeometricFeatures(lidar[1:100,],5, TRUE)
-calculateGeometricFeatures <- function(inMatrix, radius=1,  progress=TRUE){
-  NN <- calculateNeighboursIDX(inMatrix, radius, progress)
-  calculateGeometricFeatures__(inMatrix = inMatrix, idx = NN, progress=progress)
-}

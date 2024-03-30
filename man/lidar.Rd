@@ -3,7 +3,7 @@
 \docType{data}
 \name{lidar}
 \alias{lidar}
-\title{LiDAR Dataset.}
+\title{LiDAR Dataset n.1.}
 \format{
 A data frame with many rows and 3 columns, X Y and Z:
 \describe{
@@ -19,6 +19,6 @@ A data frame with many rows and 3 columns, X Y and Z:
 lidar
 }
 \description{
-Attractiveness judgements of same-sex and other-sex self-resembling faces from DeBruine (2004).
+Example Lidar dataset from LASTools (fusa.las) with only 3d data
 }
 \keyword{datasets}
