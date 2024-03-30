@@ -40,10 +40,10 @@ int  nn(int idr,
   arma::vec eigval;
   arma::mat eigvec;
   if(result.n_rows >3){
-    eig_sym(eigval, eigvec,  arma::cov(result));
-    out(idr,0) = eigval.at(0);
+    eig_sym(eigval, eigvec,  arma::cov( result ));
+    out(idr,0) = eigval.at(2);
     out(idr,1) = eigval.at(1);
-    out(idr,2) = eigval.at(2);
+    out(idr,2) = eigval.at(0);
   }
 
   return result.n_rows;
