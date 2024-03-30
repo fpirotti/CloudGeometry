@@ -12,7 +12,9 @@ Geometric features catch geometrical patterns around a certain position in 3D sp
 
 Geometrical patterns can be described using the eigenvalues of the 3D structure tensor represented by the 3D covariance matrix derived from the 3D coordinates of all points within the local neighborhood [Weinmann et al. 2015](#1).
 
-![Eigenvalues repartitions for the local neighborhood PCA. Source [Brodu&Lague 2012](#2)](images/clipboard-1255841477.png){width="536"}
+![](images/clipboard-45059455.png)
+
+Eigenvalues repartitions for the local neighborhood PCA. Source [Brodu&Lague 2012](#2)
 
 ------------------------------------------------------------------------
 
