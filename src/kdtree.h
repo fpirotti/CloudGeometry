@@ -99,13 +99,17 @@ private:
 public:
   KdNodeVector allnodes;
   size_t dimension;
+  bool progress;
   kdtree_node* root;
   // distance_type can be 0 (max), 1 (city block), or 2 (euklid [squared])
-  KdTree(const KdNodeVector* nodes, int distance_type = 2);
+  KdTree(const KdNodeVector* nodes, int distance_type = 2, bool progress=false);
   ~KdTree();
   void set_distance(int distance_type, const DoubleVector* weights = NULL);
   void k_nearest_neighbors(const CoordPoint& point, size_t k,
                            KdNodeVector* result, KdNodePredicate* pred = NULL);
+  void arma_k_nearest_neighbors(const CoordPoint& point, size_t k,
+                                arma::mat* result, KdNodePredicate* pred = NULL);
+
   void range_nearest_neighbors(const CoordPoint& point, double r,
                                KdNodeVector* result);
   void arma_range_nearest_neighbors(const CoordPoint& point, double r,

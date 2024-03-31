@@ -175,9 +175,10 @@ KdTree::~KdTree() {
   delete distance;
 }
 // distance_type can be 0 (Maximum), 1 (Manhatten), or 2 (Euklidean [squared])
-KdTree::KdTree(const KdNodeVector* nodes, int distance_type /*=2*/) {
+KdTree::KdTree(const KdNodeVector* nodes, int distance_type /*=2*/, bool progress) {
   size_t i, j;
   double val;
+  this->progress = progress;
   // copy over input data
   if (!nodes || nodes->empty())
     throw std::invalid_argument(
@@ -199,10 +200,11 @@ KdTree::KdTree(const KdNodeVector* nodes, int distance_type /*=2*/) {
     }
   }
   // build tree recursively
-  p = new Progress(allnodes.size(), true);
-  // Progress p(allnodes.size(), true);
-  p->increment();
-  root = build_tree(0, 0, allnodes.size());
+
+ p = new Progress(allnodes.size(), progress);
+ p->increment();
+
+ root = build_tree(0, 0, allnodes.size());
 
 }
 
@@ -231,7 +233,8 @@ kdtree_node* KdTree::build_tree(size_t depth, size_t a, size_t b) {
   kdtree_node* node = new kdtree_node();
   node->lobound = lobound;
   node->upbound = upbound;
-  p->increment();
+
+  if(progress)  p->increment();
 
   if ( Progress::check_abort() ){
     allnodes.clear();
@@ -318,6 +321,52 @@ void KdTree::k_nearest_neighbors(const CoordPoint& point, size_t k,
     (*result)[i] = (*result)[k - 1 - i];
     (*result)[k - 1 - i] = temp;
   }
+  delete neighborheap;
+}
+
+
+void KdTree::arma_k_nearest_neighbors(const CoordPoint& point, size_t k,
+                                      arma::mat* result,
+                                    KdNodePredicate* pred /*=NULL*/) {
+  size_t i;
+  KdNode temp;
+  searchpredicate = pred;
+
+  result->clear();
+  if (k < 1) return;
+  if (point.size() != dimension)
+    throw std::invalid_argument(
+        "kdtree::k_nearest_neighbors(): point must be of same dimension as "
+        "kdtree");
+
+  // collect result of k values in neighborheap
+  //std::priority_queue<nn4heap, std::vector<nn4heap>, compare_nn4heap>*
+  //neighborheap = new std::priority_queue<nn4heap, std::vector<nn4heap>, compare_nn4heap>();
+  SearchQueue* neighborheap = new SearchQueue();
+  if (k > allnodes.size()) {
+    // when more neighbors asked than nodes in tree, return everything
+    k = allnodes.size();
+    for (i = 0; i < k; i++) {
+      if (!(searchpredicate && !(*searchpredicate)(allnodes[i])))
+        neighborheap->push(
+            nn4heap(i, distance->distance(allnodes[i].point, point)));
+    }
+  } else {
+    neighbor_search(point, root, k, neighborheap);
+  }
+
+
+  result->set_size(neighborheap->size(), 3);
+  int rn=0;
+
+  while (!neighborheap->empty()) {
+    i = neighborheap->top().dataindex;
+    neighborheap->pop();
+    // result->push_back(allnodes[i]);
+    result->row(rn)  = arma::conv_to<arma::rowvec>::from(allnodes[i].point);
+    rn++;
+  }
+
   delete neighborheap;
 }
 

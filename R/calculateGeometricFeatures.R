@@ -13,16 +13,39 @@ NULL
 #' and 3 columns
 #' @param  radius maximum radius for which to find nearest neighbours. If
 #' the varRadius parameter
-#' @param varRadius boolean (default is false) - if to choose a radius for each
-#' point depending on the minimization of eigenEntropy (see Weinmann et al. 2015)
+#' @param varRadius boolean (default is false) - will use a different heuristic
+#' and will add k-neighbours untile it minimizes the eigenEntropy and fixes the
+#' radius.
 #' @param progress a logical boolean (default is true) - if true a progress bar
 #' will be shown
+#' @param verbose a logical boolean (default is false) - if true a
+#' lot of messages will be shown.
 #' @param threads number of threads. If zero (default) is set, it will use t-2,
 #' i.e. all threads except 2 if machine has more than 4 threads. Only works if
 #' CloudGeometry was build with OpenMP support (see documentation)
 #' @return matrix with M rows and columns with the following geometric features:
 #' \describe{
-#'    \item{nNeighbours}{number of neighbours in 3d space of sphere of radius}
+#'    \item{pointDensity}{Number of neighbours in 3d space of sphere of radius}
+#'    \item{eigenValue1}{eigenValue 1 (largest value)}
+#'    \item{eigenValue2}{eigenValue 2 (medium value)}
+#'    \item{eigenValue3}{eigenValue 3 (smallest value)}
+#'    \item{eigenEntropy}{Eigen Entropy: \eqn{- \sum_{i}^{3}\lambda_{i}*ln(\lambda_{i})}
+#'    where eigen values are normalized as   \eqn{\lambda_{i}=\frac{e_{i}}{\sum_{i}^{3}e_{i}} } }
+#'    \item{eigenSum}{Sum of Eigen values}
+#'    \item{PCA1}{First principal component}
+#'    \item{PCA2}{Second principal component}
+#'    \item{linearity}{Linearity \eqn{\frac{\lambda_{1} - \lambda_{2} }{\lambda_{1}} }  }
+#'    \item{planarity}{Planarity \eqn{\frac{\lambda_{2} - \lambda_{3} }{\lambda_{1}} }  }
+#'    \item{sphericity}{Sphericity  \eqn{\frac{\lambda_{3}}{\lambda_{1}} } }
+#'    \item{verticality}{ Angle of normal vector of best fit plane from the vertical normal vector. }
+#'    \item{anisotropy}{  Anisotropy \eqn{\frac{\lambda_{1} - \lambda_{3} }{\lambda_{1}} }  }
+#'    \item{omnivariance}{ Omnivariance \eqn{\sqrt[3]{\lambda_1\lambda_2\lambda_3 }}. }
+#'    \item{change_of_curvature}{ Also called surface variation:
+#'                          \eqn{\frac{e_{3}}{\sum_{i}^{3}e_{i}} }  . }
+#'    \item{optRadius}{ Only available if "**varRadius=TRUE**" and shows the optimal radius value that minimizes the entropy of eigen values. }
+#'
+#'
+#'
 #' }
 #' @importFrom Rcpp evalCpp
 #' @import RcppArmadillo
@@ -34,7 +57,7 @@ NULL
 #' # ## bind
 #' # data.table::fwrite( cbind(lidar, nn), "out.csv")
 #'
-calcGF <- function(pc3d, radius=1,  varRadius=FALSE, progress=T,  threads=0){
+calcGF <- function(pc3d, radius=1,  varRadius=FALSE, progress=T, verbose=F, threads=0){
 
   if(nrow(pc3d)<4){
     stop("Number of rows in matrix are too few: ",
@@ -47,13 +70,15 @@ calcGF <- function(pc3d, radius=1,  varRadius=FALSE, progress=T,  threads=0){
          ncol(pc3d), " columns.")
   }
 
+  if(verbose) message("Starting eigen calculations...")
   ne<-nnEigen(pc3d,  radius = radius, varRadius=varRadius,
-              progress=progress, threads=threads)
+              progress=progress, verbose=verbose, threads=threads)
 
-  message("Almost done, doing final calculations...")
+  if(verbose) message("Almost done, doing final calculations...")
+
   if(nrow(ne)>0){
     gf <- data.frame(
-      nNeighbours = ne[,6],
+      pointDensity = ne[,6],
       eigenValue1 = ne[,1],
       eigenValue2 = ne[,2],
       eigenValue3 = ne[,3],
@@ -61,19 +86,24 @@ calcGF <- function(pc3d, radius=1,  varRadius=FALSE, progress=T,  threads=0){
       eigenSum =  ne[,4],
       PCA1 =  ne[,1] / ne[,4],
       PCA2 =  ne[,2] / ne[,4],
-      linearity = (ne[,1] - ne[,2]) / ne[,1],
-      planarity  = (ne[,2] - ne[,3]) / ne[,1],
-      sphericity = ne[,3] / ne[,1],
+      linearity   = (ne[,1] - ne[,2]) / ne[,1],
+      planarity   = (ne[,2] - ne[,3]) / ne[,1],
+      sphericity  = ne[,3] / ne[,1],
       verticality = ne[,7],
       anisotropy   =  (ne[,1] - ne[,3]) / ne[,1],
       omnivariance =  (ne[,1] * ne[,2] *  ne[,3])^(1/3),
       change_of_curvature   =  ne[,3] / ne[,4]
     )
   } else {
-    message("No rows, maybe interrupted by user?")
+    if(verbose)  message("No rows, maybe interrupted by user?")
     gf <- NA
   }
 
+  if(varRadius){
+    gf$optRadius <- ne[,8]
+    gf$mcounts <- ne[,9]
+    gf$fractionizer <- ne[,10]
+  }
 
   gf
 
