@@ -12,22 +12,23 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // nnEigen
-arma::mat nnEigen(arma::mat const& x, double radius, bool progbar, int threads);
-RcppExport SEXP _CloudGeometry_nnEigen(SEXP xSEXP, SEXP radiusSEXP, SEXP progbarSEXP, SEXP threadsSEXP) {
+arma::mat nnEigen(arma::mat const& x, double radius, bool varRadius, bool progress, int threads);
+RcppExport SEXP _CloudGeometry_nnEigen(SEXP xSEXP, SEXP radiusSEXP, SEXP varRadiusSEXP, SEXP progressSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat const& >::type x(xSEXP);
     Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
-    Rcpp::traits::input_parameter< bool >::type progbar(progbarSEXP);
+    Rcpp::traits::input_parameter< bool >::type varRadius(varRadiusSEXP);
+    Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(nnEigen(x, radius, progbar, threads));
+    rcpp_result_gen = Rcpp::wrap(nnEigen(x, radius, varRadius, progress, threads));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_CloudGeometry_nnEigen", (DL_FUNC) &_CloudGeometry_nnEigen, 4},
+    {"_CloudGeometry_nnEigen", (DL_FUNC) &_CloudGeometry_nnEigen, 5},
     {NULL, NULL, 0}
 };
 

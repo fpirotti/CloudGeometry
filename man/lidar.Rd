@@ -13,7 +13,7 @@ A data frame with many rows and 3 columns, X Y and Z:
 }
 }
 \source{
-\url{https://lastools.github.io/}
+\url{https://github.com/LAStools/LAStools/raw/master/data/fusa.laz/}
 }
 \usage{
 lidar

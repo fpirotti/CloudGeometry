@@ -8,5 +8,5 @@
 #'   \item{Y}{Y coordinate}
 #'   \item{Z}{height above sea level}
 #' }
-#' @source \url{https://lastools.github.io/}
+#' @source \url{https://github.com/LAStools/LAStools/raw/master/data/fusa.laz/}
 "lidar"

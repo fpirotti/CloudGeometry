@@ -16,14 +16,15 @@ using namespace Rcpp;
 using namespace std;
 using namespace arma;
 
-
+arma::vec vertical = { 0, 0, 1 };
 
 // [[Rcpp::depends(RcppProgress)]]
 int  nn(int idr,
               double radius,
               arma::mat const &x,
               arma::mat &out,
-              Kdtree::KdTree &tree ) {
+              Kdtree::KdTree &tree,
+              bool varRadius=false) {
 
 
   if ( Progress::check_abort() )
@@ -38,11 +39,26 @@ int  nn(int idr,
   tree.arma_range_nearest_neighbors(point, radius, &result);
   arma::vec eigval;
   arma::mat eigvec;
+  double eigenEntropy , eigenSum, verticality = 0;
   if(result.n_rows >3){
     eig_sym(eigval, eigvec,  arma::cov( result ));
+    eigenSum  = arma::sum(eigval);
+    verticality = dot( eigvec.col(2),vertical) / arma::datum::pi * 180.0 ;
+    // avoid log -inf adding a tiny amount
     out(idr,0) = eigval.at(2);
     out(idr,1) = eigval.at(1);
     out(idr,2) = eigval.at(0);
+    out(idr,3) = eigenSum;
+
+    eigval = eigval /  eigenSum;
+
+    eigenEntropy  = ( -1.0*eigval.at(0)*log( (eigval.at(0)+0.00000000001) )
+                          -eigval.at(1)*log( (eigval.at(1)+0.00000000001) )
+                          -eigval.at(2)*log( (eigval.at(2)+0.00000000001) ) );
+
+    out(idr,4) = eigenEntropy;
+    out(idr,5) = result.n_rows;
+    out(idr,6) = verticality;
   }
 
   return result.n_rows;
@@ -54,7 +70,7 @@ int  nn(int idr,
 
 // [[Rcpp::depends(RcppProgress)]]
 Kdtree::KdNodeVector cTree(arma::mat const &x,
-                           bool progbar = true) {
+                           bool progress = true) {
 
   int nRows = x.n_rows;
 
@@ -83,7 +99,8 @@ Kdtree::KdNodeVector cTree(arma::mat const &x,
 // [[Rcpp::export]]
 arma::mat  nnEigen(arma::mat const &x,
                    double radius = 1.0,
-                   bool progbar = true,
+                   bool varRadius=false,
+                   bool progress = true,
                    int threads=0) {
 
   int noNoNeighbours = 0;
@@ -91,7 +108,11 @@ arma::mat  nnEigen(arma::mat const &x,
   // Kdtree::KdNodeVector nodes;
   int nRows = x.n_rows;
 
-  arma::mat out(   nRows, 3  );
+  // out matrix has
+  //   3 eigenvalues
+  //   eigenEntropy
+  //
+  arma::mat out(   nRows, 7  );
   out.fill(datum::nan);
 
   if(nRows < 4){
@@ -101,9 +122,9 @@ arma::mat  nnEigen(arma::mat const &x,
 
   int counter = (int)(ceil(nRows / 100.0f + 1.0f));
 
-  Kdtree::KdNodeVector a = cTree(x, progbar);
+  Kdtree::KdNodeVector a = cTree(x, progress);
 
-  REprintf("Creating tree with %d nodes\n", a.size() );
+  REprintf("Creating tree with %lu nodes\n", a.size() );
   Kdtree::KdTree tree(&a);
 
   if(tree.allnodes.size()==0){
@@ -112,7 +133,7 @@ arma::mat  nnEigen(arma::mat const &x,
     return(out);
   }
 
-  REprintf("Finished tree with %d nodes\n", tree.allnodes.size() );
+  REprintf("Finished tree with %lu  nodes\n", tree.allnodes.size() );
   REprintf("Searching NN with radius of %.3f ... ", radius );
 
   arma::vec eigval;
@@ -140,7 +161,7 @@ Progress p(nRows, true);
   for ( idr=0; idr<nRows;idr++) {
     if ( ! p.is_aborted() ){
       if ( p.increment() ) { // the only way to exit an OpenMP loop
-        int nnc = nn(idr, radius, x, out, tree  );
+        int nnc = nn(idr, radius, x, out, tree, varRadius );
         if(nnc<4) noNoNeighbours++;
       }
     }

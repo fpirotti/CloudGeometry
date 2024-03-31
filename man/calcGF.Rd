@@ -4,16 +4,20 @@
 \alias{calcGF}
 \title{calcGF}
 \usage{
-calcGF(pc3d, radius = 1, progress = T, threads = 0)
+calcGF(pc3d, radius = 1, varRadius = FALSE, progress = T, threads = 0)
 }
 \arguments{
 \item{pc3d}{matrix 3D point cloud in  matrix format with columns
 with X Y Z coordinates, #' and rows of observations, so M rows
 and 3 columns}
 
-\item{radius}{maximum radius for which to find nearest neighbours}
+\item{radius}{maximum radius for which to find nearest neighbours. If
+the varRadius parameter}
 
-\item{progress}{a logical bolean - if true a progress bar
+\item{varRadius}{boolean (default is false) - if to choose a radius for each
+point depending on the minimization of eigenEntropy (see Weinmann et al. 2015)}
+
+\item{progress}{a logical boolean (default is true) - if true a progress bar
 will be shown}
 
 \item{threads}{number of threads. If zero (default) is set, it will use t-2,
@@ -21,13 +25,18 @@ i.e. all threads except 2 if machine has more than 4 threads. Only works if
 CloudGeometry was build with OpenMP support (see documentation)}
 }
 \value{
-matrix with M rows and columns
+matrix with M rows and columns with the following geometric features:
+\describe{
+\item{nNeighbours}{number of neighbours in 3d space of sphere of radius}
+}
 }
 \description{
 Calculate Geometric Features
 }
 \examples{
 #subset the first 100 rows of the lidar point cloud example to limit execution time.
-#nn <- calcGF(lidar[1:100,],5, TRUE)
+#nn <- calcGF(lidar,5, TRUE)
+# ## bind
+# data.table::fwrite( cbind(lidar, nn), "out.csv")
 
 }

@@ -20,17 +20,17 @@ Due to the the expected large volume of points in point clouds that are surveyed
 
 The following geometric features are currently implemented:
 
+-   point Density (number of neighbours in 3d space of sphere of radius)
 -   1st eigenvalue
 -   2nd eigenvalue
 -   3rd eigenvalue
--   Planarity
--   Linearity
--   Sphericity
--   Verticality
--   Sum of eigenvalues
--   Omnivariance
 -   Eigenentropy
+-   Sum of eigenvalues
+-   Linearity
+-   Planarity
+-   Sphericity
 -   Anisotropy
+-   Omnivariance
 -   PCA 1
 -   PCA 2
 -   Surface variation
@@ -68,4 +68,4 @@ More feature descriptors such as Fast Point Feature Histograms (FPFH) as impleme
 
 <a id="2">[2]</a> Weinmann, M., Jutzi, B., Mallet, C., 2014. Semantic 3D scene interpretation: A framework combining optimal neighborhood size selection with relevant features. ISPRS Annals of the Photogrammetry, Remote Sensing and Spatial Information Sciences II–3, 181–188. <https://doi.org/10.5194/isprsannals-II-3-181-2014>
 
-<a id="3">[3]</a>  Brodu, N., Lague, D., 2012. 3D terrestrial lidar data classification of complex natural scenes using a multi-scale dimensionality criterion: Applications in geomorphology. ISPRS Journal of Photogrammetry and Remote Sensing 68, 121–134. <https://doi.org/10.1016/j.isprsjprs.2012.01.006> 
+<a id="3">[3]</a> Brodu, N., Lague, D., 2012. 3D terrestrial lidar data classification of complex natural scenes using a multi-scale dimensionality criterion: Applications in geomorphology. ISPRS Journal of Photogrammetry and Remote Sensing 68, 121–134. <https://doi.org/10.1016/j.isprsjprs.2012.01.006>
