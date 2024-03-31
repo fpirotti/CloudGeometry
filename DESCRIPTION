@@ -1,6 +1,6 @@
 Package: CloudGeometry
 Title: Mapping Physiological Equivalent Temperature
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: person(given = "Francesco",
            family = "Pirotti",
            role = c("aut", "cre"),
