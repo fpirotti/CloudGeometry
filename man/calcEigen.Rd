@@ -31,5 +31,5 @@ Calculate Eigen values
 }
 \examples{
 #subset the first 100 rows of the lidar point cloud example to limit execution time.
-nn <- calcEigen(lidar[1:100,],5, TRUE)
+#nn <- calcEigen(lidar[1:100,],5, TRUE)
 }

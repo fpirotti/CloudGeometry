@@ -28,7 +28,7 @@ NULL
 #' @export
 #'
 #' @examples #subset the first 100 rows of the lidar point cloud example to limit execution time.
-#' nn <- calcEigen(lidar[1:100,],5, TRUE)
+#' #nn <- calcEigen(lidar[1:100,],5, TRUE)
 calcEigen <- function(pc3d, radius=1,  progress=T, threads=0){
   if(nrow(pc3d)<4){
     stop("Number of rows in matrix are too few: ",
@@ -64,7 +64,7 @@ calcEigen <- function(pc3d, radius=1,  progress=T, threads=0){
 #' @export
 #'
 #' @examples #subset the first 100 rows of the lidar point cloud example to limit execution time.
-#' nn <- calcGF(lidar[1:100,],5, TRUE)
+#' #nn <- calcGF(lidar[1:100,],5, TRUE)
 #'
 calcGF <- function(pc3d, radius=1,  progress=T, threads=0){
 
@@ -80,6 +80,7 @@ calcGF <- function(pc3d, radius=1,  progress=T, threads=0){
   }
 
   ne<-nnEigen(pc3d,  radius = radius,  progbar=progress, threads=threads)
+  message("Almost done, doing final calculations...")
   if(nrow(ne)>0){
     eigenSum = rowSums(ne)
     gf <- data.frame(
@@ -92,6 +93,7 @@ calcGF <- function(pc3d, radius=1,  progress=T, threads=0){
       sphericity = ne[,3] / ne[,1],
       omnivariance =  (ne[,1] * ne[,2] *  ne[,3])^(1/3),
       anisotropy   =  (ne[,1] - ne[,3]) / ne[,1],
+      eigenEntropy   =  ne[,1]^log(ne[,1]) + ne[,2]^log(ne[,2]) + ne[,3]^log(ne[,3]),
       change_of_curvature   =  ne[,3] / eigenSum
     )
   } else {
