@@ -356,14 +356,18 @@ void KdTree::arma_k_nearest_neighbors(const CoordPoint& point, size_t k,
   }
 
 
-  result->set_size(neighborheap->size(), 3);
+  // result->set_size(neighborheap->size(), 4);
+  result->zeros(neighborheap->size(), 4);
   int rn=0;
 
   while (!neighborheap->empty()) {
     i = neighborheap->top().dataindex;
+    (*result)(rn, 0)  = allnodes[i].point[0];
+    (*result)(rn, 1)  = allnodes[i].point[1];
+    (*result)(rn, 2)  = allnodes[i].point[2];
+    (*result)(rn, 3)  = neighborheap->top().distance;
     neighborheap->pop();
-    // result->push_back(allnodes[i]);
-    result->row(rn)  = arma::conv_to<arma::rowvec>::from(allnodes[i].point);
+
     rn++;
   }
 

@@ -11,19 +11,28 @@ NULL
 #' @param pc3d matrix 3D point cloud in  matrix format with columns
 #' with X Y Z coordinates, #' and rows of observations, so M rows
 #' and 3 columns
-#' @param  radius maximum radius for which to find nearest neighbours. If
-#' the varRadius parameter
+#' @param  rk  **(1) in case of varRadius==FALSE**, rk is the radius of the sphere
+#'  where  to find the nearest neighbours for each point.
+#'
+#'  **(2) in case of varRadius==TRUE** rk is the largest number of nearest
+#'  neighbours to read from and that define the largest radius - from here 30
+#'  smaller radii will be tested to find the one with the minimum eigen entropy
+#'  value.
+#' *the varRadius parameter is TRUE*, this is the k nearest neighbours that will
+#' be evaluated for the largest starting radius.
 #' @param varRadius boolean (default is false) - will use a different heuristic
 #' and will add k-neighbours untile it minimizes the eigenEntropy and fixes the
 #' radius.
-#' @param progress a logical boolean (default is true) - if true a progress bar
+#' @param progress a logical boolean (default is TRUE) - if true a progress bar
 #' will be shown
-#' @param verbose a logical boolean (default is false) - if true a
+#' @param verbose a logical boolean (default is FALSE) - if true a
 #' lot of messages will be shown.
 #' @param threads number of threads. If zero (default) is set, it will use t-2,
 #' i.e. all threads except 2 if machine has more than 4 threads. Only works if
 #' CloudGeometry was build with OpenMP support (see documentation)
-#' @return matrix with M rows and columns with the following geometric features:
+#' @return matrix with M rows.
+#'
+#' Columns will have  the following geometric features:
 #' \describe{
 #'    \item{pointDensity}{Number of neighbours in 3d space of sphere of radius}
 #'    \item{eigenValue1}{eigenValue 1 (largest value)}
@@ -53,25 +62,38 @@ NULL
 #' @export
 #'
 #' @examples #subset the first 100 rows of the lidar point cloud example to limit execution time.
-#' #nn <- calcGF(lidar,5, TRUE)
-#' # ## bind
+#' #nn <- calcGF(lidar,5, FALSE, TRUE, TRUE)
+#' # ## bind to original table
 #' # data.table::fwrite( cbind(lidar, nn), "out.csv")
 #'
-calcGF <- function(pc3d, radius=1,  varRadius=FALSE, progress=T, verbose=F, threads=0){
+calcGF <- function(pc3d, rk=1,  varRadius=FALSE, progress=T, verbose=F, threads=0){
 
   if(nrow(pc3d)<4){
-    stop("Number of rows in matrix are too few: ",
-         nrow(pc3d),  " found.")
+    stop("Number of rows/points in matrix are too few: ",
+         nrow(pc3d),  " points found.")
+  }
+
+  if(nrow(pc3d)<100 && varRadius){
+    warning("Number of rows/points in matrix are too few for variable radius as at least 100 k-nearest neighbours are assessed as larger radius: ",
+         nrow(pc3d),  " points found.")
+    return(NA)
+  }
+
+  if( rk < 10 && varRadius){
+    warning("rk < 10 does not make much sense with varRadius: remember that rk will
+         mean k-nearest neighbours are used to define the larger radius:", rk ," points defined by user. Around 100 points are suggested.")
+    return(NA)
   }
 
   if(ncol(pc3d)!=3){
-    stop("There should be three  columns in matrix,
+    warning("There should be three  columns in matrix,
          with XYZ coordinates. Your matrix has ",
          ncol(pc3d), " columns.")
+    return(NA)
   }
 
   if(verbose) message("Starting eigen calculations...")
-  ne<-nnEigen(pc3d,  radius = radius, varRadius=varRadius,
+  ne<-nnEigen(pc3d,  radius = rk, varRadius=varRadius,
               progress=progress, verbose=verbose, threads=threads)
 
   if(verbose) message("Almost done, doing final calculations...")
@@ -108,7 +130,21 @@ calcGF <- function(pc3d, radius=1,  varRadius=FALSE, progress=T, verbose=F, thre
   gf
 
 }
-
-
+#
+# h <- function(){
+#   library(ggplot2)
+#   a<-read.csv("A.csv")
+#   a<-na.omit(a)
+#   names(a)<-c("radius", "eigenEntropy", "pointID", "count")
+#
+#   a<-a[a$pointID!=0,]
+#   a$pointID <- as.factor(a$pointID)
+#
+#   ggplot(a[as.integer(a$pointID)<10,], aes(y=eigenEntropy, x=radius,
+#                                           group=pointID, color=pointID ) ) +
+#     geom_line() +
+#     xlab("Radius (m)") + theme_bw()
+#
+# }
 
 

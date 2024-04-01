@@ -4,31 +4,31 @@
 \alias{calcGF}
 \title{calcGF}
 \usage{
-calcGF(
-  pc3d,
-  radius = 1,
-  varRadius = FALSE,
-  progress = T,
-  verbose = F,
-  threads = 0
-)
+calcGF(pc3d, rk = 1, varRadius = FALSE, progress = T, verbose = F, threads = 0)
 }
 \arguments{
 \item{pc3d}{matrix 3D point cloud in  matrix format with columns
 with X Y Z coordinates, #' and rows of observations, so M rows
 and 3 columns}
 
-\item{radius}{maximum radius for which to find nearest neighbours. If
-the varRadius parameter}
+\item{rk}{\strong{(1) in case of varRadius==FALSE}, rk is the radius of the sphere
+where  to find the nearest neighbours for each point.
+
+\strong{(2) in case of varRadius==TRUE} rk is the largest number of nearest
+neighbours to read from and that define the largest radius - from here 30
+smaller radii will be tested to find the one with the minimum eigen entropy
+value.
+\emph{the varRadius parameter is TRUE}, this is the k nearest neighbours that will
+be evaluated for the largest starting radius.}
 
 \item{varRadius}{boolean (default is false) - will use a different heuristic
 and will add k-neighbours untile it minimizes the eigenEntropy and fixes the
 radius.}
 
-\item{progress}{a logical boolean (default is true) - if true a progress bar
+\item{progress}{a logical boolean (default is TRUE) - if true a progress bar
 will be shown}
 
-\item{verbose}{a logical boolean (default is false) - if true a
+\item{verbose}{a logical boolean (default is FALSE) - if true a
 lot of messages will be shown.}
 
 \item{threads}{number of threads. If zero (default) is set, it will use t-2,
@@ -36,7 +36,9 @@ i.e. all threads except 2 if machine has more than 4 threads. Only works if
 CloudGeometry was build with OpenMP support (see documentation)}
 }
 \value{
-matrix with M rows and columns with the following geometric features:
+matrix with M rows.
+
+Columns will have  the following geometric features:
 \describe{
 \item{pointDensity}{Number of neighbours in 3d space of sphere of radius}
 \item{eigenValue1}{eigenValue 1 (largest value)}
@@ -64,8 +66,8 @@ Calculate Geometric Features
 }
 \examples{
 #subset the first 100 rows of the lidar point cloud example to limit execution time.
-#nn <- calcGF(lidar,5, TRUE)
-# ## bind
+#nn <- calcGF(lidar,5, FALSE, TRUE, TRUE)
+# ## bind to original table
 # data.table::fwrite( cbind(lidar, nn), "out.csv")
 
 }

@@ -17,6 +17,7 @@ using namespace std;
 using namespace arma;
 
 arma::vec vertical = { 0, 0, 1 };
+arma::mat varrad = arma::mat(100*26, 4);
 
 // [[Rcpp::depends(RcppProgress)]]
 int  nn(int idr,
@@ -30,6 +31,7 @@ int  nn(int idr,
   if ( Progress::check_abort() )
     return -1;
 
+  int k; // in case varRadius==true
   std::vector<double> point(3);
   //Kdtree::KdNodeVector result;
   arma::mat result;
@@ -38,81 +40,92 @@ int  nn(int idr,
   point[2] =  x(idr, 2);
 
   arma::vec eigval;
+  arma::vec tempeigval;
   arma::mat eigvec;
+  arma::mat tempeigvec;
   double eigenEntropy , minEE, finalRadius, eigenSum, verticality = 0;
 
   //////// if varRadius == true we have to calculate entropy and get
   // the lowest one... we start with largest and then
   // do some heuristics to limit the loop:  max 100
   if(varRadius){
-
-    int mCounts = 1;
+    k = (int)radius;
     // std::vector<float> distances;
-    tree.arma_k_nearest_neighbors(point, 10, &result);
-    eig_sym(eigval, eigvec,  arma::cov( result ));
+    //
+    tree.arma_k_nearest_neighbors(point, k, &result);
+    eig_sym(eigval, eigvec,  arma::cov( result.cols(0,2) ));
+    tempeigval = eigval;
+    tempeigvec = eigvec;
     eigenSum  = arma::sum(eigval);
+
     eigval = eigval /  eigenSum;
     eigenEntropy  = ( -1.0*eigval.at(0)*log( (eigval.at(0)+0.00000000001) )
                         -eigval.at(1)*log( (eigval.at(1)+0.00000000001) )
                         -eigval.at(2)*log( (eigval.at(2)+0.00000000001) ) );
 
     minEE = eigenEntropy;
-    finalRadius = radius;
-    // double originalRadius = radius;
-    double fractionizer = radius;
-    int dir = 0;
-    int changedSign = 0;
+    // first point is the most distant
+    finalRadius = result(0,3);
 
-    while(mCounts< 50){
+    int mCounts = 0;
+    int steps = 25;
+    int step = (int)(floor( (k-10)/steps));
+
+    // if(idr%((int)(x.n_rows/100))==0) {
+    //   varrad( (int)(idr/((int)(x.n_rows/100)))*25, 0 ) = finalRadius;
+    //   varrad( (int)(idr/((int)(x.n_rows/100)))*25, 1 ) = eigenEntropy;
+    //   varrad( (int)(idr/((int)(x.n_rows/100)))*25, 2)  = idr;
+    //   varrad( (int)(idr/((int)(x.n_rows/100)))*25, 3)  = 0;
+    // }
+
+    while(mCounts< steps){
       mCounts++;
-      if(result.n_rows < 5){
-        if(dir < 0){
-          changedSign++;
-        }
-        dir = 1;
-      }
 
-      if(result.n_rows > 500){
-        if(dir > 0){
-          changedSign++;
-        }
-        dir = -1;
-      }
-
-      if(changedSign >2){
-        changedSign=0;
-        fractionizer = fractionizer/2;
-      }
-      radius += (fractionizer*dir);
-      tree.arma_range_nearest_neighbors(point, radius, &result);
-
-      if(result.n_rows < 4){
-        // Rprintf("Less than four results, breaking the search after %d searches\n", mCounts);
-        continue;
-      }
-      eig_sym(eigval, eigvec,  arma::cov( result ));
+      eig_sym(eigval, eigvec,  arma::cov( result.submat((step*mCounts - 1),0,(k-1),2) ) );
       eigenSum  = arma::sum(eigval);
-      eigval = eigval /  eigenSum;
-      eigenEntropy  = ( -1.0*eigval.at(0)*log( (eigval.at(0)+0.00000000001) )
-                            -eigval.at(1)*log( (eigval.at(1)+0.00000000001) )
-                            -eigval.at(2)*log( (eigval.at(2)+0.00000000001) ) );
+      // return result.n_rows;
+
+
+      tempeigval = eigval /  eigenSum;
+
+      eigenEntropy  = ( -1.0*tempeigval.at(0)*log( (tempeigval.at(0)+0.00000000001) )
+                          -tempeigval.at(1)*log( (tempeigval.at(1)+0.00000000001) )
+                          -tempeigval.at(2)*log( (tempeigval.at(2)+0.00000000001) ) );
+
+
+      // if(idr%((int)(x.n_rows/100))==0) {
+      //   varrad( (int)(idr/((int)(x.n_rows/100)))*25+mCounts, 0 ) =  result((step*mCounts-1),3);
+      //   varrad( (int)(idr/((int)(x.n_rows/100)))*25+mCounts, 1 ) = eigenEntropy;
+      //   varrad( (int)(idr/((int)(x.n_rows/100)))*25+mCounts, 2)  = idr;
+      //   varrad( (int)(idr/((int)(x.n_rows/100)))*25+mCounts, 3)  = mCounts;
+      // }
 
       if(minEE > eigenEntropy) {
         minEE = eigenEntropy;
-        finalRadius = radius;
+        finalRadius = result((step*mCounts-1),3);
+        out(idr,5) = (k - step*mCounts);
+        tempeigval = eigval;
+        tempeigvec = eigvec;
       }
     }
-    radius = finalRadius;
-    out(idr,8)=mCounts;
-    out(idr,9)=fractionizer;
+
+    eigval = tempeigval;
+    eigvec = tempeigvec;
+    eigenSum  = arma::sum(eigval);
+    out(idr,7)=finalRadius;
+
+
+  } else{
+    tree.arma_range_nearest_neighbors(point, radius, &result);
+    if(result.n_rows >3){
+      return result.n_rows;
+    }
+    eig_sym(eigval, eigvec,  arma::cov( result.cols(0,2) ));
+    eigenSum  = arma::sum(eigval);
+    out(idr,5) = result.n_rows;
   }
 
-  tree.arma_range_nearest_neighbors(point, radius, &result);
-
-  if(result.n_rows >3){
-    eig_sym(eigval, eigvec,  arma::cov( result ));
-    eigenSum  = arma::sum(eigval);
-    verticality = (dot( eigvec.col(0),vertical)/eigval.at(0) ) / arma::datum::pi * 180.0 ;
+    verticality = acos(dot( eigvec.col(0),vertical)/eigval.at(0) ) / arma::datum::pi * 180.0 ;
     // avoid log -inf adding a tiny amount
     out(idr,0) = eigval.at(2);
     out(idr,1) = eigval.at(1);
@@ -125,14 +138,9 @@ int  nn(int idr,
                           -eigval.at(2)*log( (eigval.at(2)+0.00000000001) ) );
 
     out(idr,4) = eigenEntropy;
-    out(idr,5) = result.n_rows;
     out(idr,6) = verticality;
-    if(varRadius) {
-      out(idr,7) = radius;
-    }
-  }
 
-  return result.n_rows;
+    return result.n_rows;
 
 }
 
@@ -194,6 +202,14 @@ arma::mat  nnEigen(arma::mat const &x,
   Kdtree::KdTree tree(&a, 2, progress);
 
 
+
+  if(varRadius && radius<100){
+    REprintf("At least 100 points are required for automatic radius definition \n" );
+    REprintf("You have setup rk=%d and with varRadius==true this must be at least 100 \n", (int)radius );
+    out.clear();
+    return(out);
+  }
+
   if(tree.allnodes.size()==0){
     REprintf("Stopped by user\n" );
     out.clear();
@@ -211,7 +227,7 @@ arma::mat  nnEigen(arma::mat const &x,
 #ifdef _OPENMP
   if ( threads > 0 ){
     omp_set_num_threads( threads );
-    if(verbose) REprintf("\nNumber of threads = %i as requested.\n", threads);
+    if(verbose) REprintf("\nNumber of threads = %i as requested.\n", omp_get_max_threads() );
   } else {
     int nt = omp_get_max_threads();
     int nto = nt;
@@ -235,7 +251,15 @@ arma::mat  nnEigen(arma::mat const &x,
 
   p.cleanup();
   double sphereArea = (4/3* arma::datum::pi * pow(radius, 3.0) );
-  out.col(5)  = out.col(5) / sphereArea;
+
+  if(varRadius) {
+    varrad.save("A.csv", arma::csv_ascii );
+    out.col(5)  = out.col(5) / out(idr,7);
+  } else {
+    out.col(5)  = out.col(5) / sphereArea;
+  }
+
+
   if(noNoNeighbours>0){
     if(verbose) REprintf(
 "\n%d points out of %d have only 3 or less neighbours so NaN was assigned"
