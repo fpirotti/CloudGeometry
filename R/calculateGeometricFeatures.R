@@ -62,7 +62,7 @@ NULL
 #' @export
 #'
 #' @examples #subset the first 100 rows of the lidar point cloud example to limit execution time.
-#' #nn <- calcGF(lidar,5, FALSE, TRUE, TRUE)
+#' #nn <- calcGF(lidar,200, T, TRUE, TRUE)
 #' # ## bind to original table
 #' # data.table::fwrite( cbind(lidar, nn), "out.csv")
 #'
@@ -123,8 +123,8 @@ calcGF <- function(pc3d, rk=1,  varRadius=FALSE, progress=T, verbose=F, threads=
 
   if(varRadius){
     gf$optRadius <- ne[,8]
-    gf$mcounts <- ne[,9]
-    gf$fractionizer <- ne[,10]
+    # gf$mcounts <- ne[,9]
+    # gf$fractionizer <- ne[,10]
   }
 
   gf

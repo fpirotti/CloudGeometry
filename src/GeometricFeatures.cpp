@@ -125,7 +125,6 @@ int  nn(int idr,
     out(idr,5) = result.n_rows;
   }
 
-    verticality = acos(dot( eigvec.col(0),vertical)/eigval.at(0) ) / arma::datum::pi * 180.0 ;
     // avoid log -inf adding a tiny amount
     out(idr,0) = eigval.at(2);
     out(idr,1) = eigval.at(1);
@@ -133,6 +132,8 @@ int  nn(int idr,
     out(idr,3) = eigenSum;
 
     eigval = eigval /  eigenSum;
+    verticality = acos( 1 - dot( eigvec.col(0),vertical)/eigval.at(0) ) / arma::datum::pi * 180.0 ;
+
     eigenEntropy  = ( -1.0*eigval.at(0)*log( (eigval.at(0)+0.00000000001) )
                           -eigval.at(1)*log( (eigval.at(1)+0.00000000001) )
                           -eigval.at(2)*log( (eigval.at(2)+0.00000000001) ) );
@@ -253,7 +254,7 @@ arma::mat  nnEigen(arma::mat const &x,
   double sphereArea = (4/3* arma::datum::pi * pow(radius, 3.0) );
 
   if(varRadius) {
-    varrad.save("A.csv", arma::csv_ascii );
+    // varrad.save("A.csv", arma::csv_ascii );
     out.col(5)  = out.col(5) / out(idr,7);
   } else {
     out.col(5)  = out.col(5) / sphereArea;
