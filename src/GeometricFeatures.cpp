@@ -117,7 +117,7 @@ int  nn(int idr,
 
   } else{
     tree.arma_range_nearest_neighbors(point, radius, &result);
-    if(result.n_rows >3){
+    if(result.n_rows<4){
       return result.n_rows;
     }
     eig_sym(eigval, eigvec,  arma::cov( result.cols(0,2) ));
