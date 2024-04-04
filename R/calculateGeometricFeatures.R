@@ -88,8 +88,13 @@ calcGF <- function(pc3d, rk=1,  varRadius=FALSE, progress=T, verbose=F, threads=
   if(ncol(pc3d)!=3){
     warning("There should be three  columns in matrix,
          with XYZ coordinates. Your matrix has ",
-         ncol(pc3d), " columns.")
+         ncol(pc3d), " columns! Please fix this")
     return(NA)
+  }
+
+  if(!is.matrix(pc3d) ){
+    warning("Element is not a matrix, will convert to matrix...")
+    pc3d <- as.matrix(pc3d)
   }
 
   if(verbose) message("Starting eigen calculations...")
