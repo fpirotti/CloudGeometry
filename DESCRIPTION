@@ -1,14 +1,13 @@
 Package: CloudGeometry
-Title: Mapping Physiological Equivalent Temperature
-Version: 0.2.0
+Title: Parallel computation of geometric features for each point in a 3d point cloud
+Version: 0.2.1
 Authors@R: person(given = "Francesco",
            family = "Pirotti",
            role = c("aut", "cre"),
            email = "francesco.pirotti@unipd.it",
            comment = c(ORCID = "0000-0002-4796-6406") ) 
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Maintainer: Francesco Pirotti<francesco.pirotti@unipd.it>
+Description: Parallel computation of geometric features for each point in a point cloud using an auto-adaptive or fixed radius.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
