@@ -1,6 +1,6 @@
 Package: CloudGeometry
 Title: Parallel computation of geometric features for each point in a 3d point cloud
-Version: 0.2.1
+Version: 0.2.2
 Authors@R: person(given = "Francesco",
            family = "Pirotti",
            role = c("aut", "cre"),
