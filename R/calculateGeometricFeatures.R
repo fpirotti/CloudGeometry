@@ -31,8 +31,14 @@ NULL
 #' i.e. all threads except 2 if machine has more than 4 threads. Only works if
 #' CloudGeometry was build with OpenMP support (see documentation)
 #' @param autoname  boolean default is TRUE - autoname will automatically put a
-#' suffix to output column names (see return value) with information on rk and
-#' fixed vs auto radius definition (see varRadius argument).
+#' prefix to output column names (see return value) with information on rk and
+#' fixed vs auto radius definition (see varRadius argument). If a fixed radius
+#' (varRadius=FALSE) then the prefix will be "rNN.nn_<name of column>"
+#' where NN.nnn is the radius value inserted by the user via the ```rk``` argument
+#' wheras if a variable automatic radius is defined (varRadius=TRUE) then the
+#' prefix will be "kNNN_<name of column>" where NNN is the value of
+#' the ```rk``` argument, in this case the maximum initial number of nearest
+#' neighbours to set the largest radius.
 #' @return matrix with M rows.
 #'
 #' Columns will have  the following geometric features:
@@ -137,8 +143,8 @@ calcGF <- function(pc3d, rk=1,  varRadius=FALSE, progress=T,
   }
 
   if(autoname){
-    if(varRadius) names(gf) <- sprintf("maxKnn%d_%s", rk, names(gf))
-    else  names(gf) <- sprintf("fixRadius%.3f_%s", rk, names(gf))
+    if(varRadius) names(gf) <- sprintf("k%d_%s", rk, names(gf))
+    else  names(gf) <- sprintf("r%.2f_%s", rk, names(gf))
   }
   gf
 }

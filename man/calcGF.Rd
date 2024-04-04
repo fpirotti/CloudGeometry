@@ -44,8 +44,12 @@ i.e. all threads except 2 if machine has more than 4 threads. Only works if
 CloudGeometry was build with OpenMP support (see documentation)}
 
 \item{autoname}{boolean default is TRUE - autoname will automatically put a
-suffix to output column names (see return value) with information on rk and
-fixed vs auto radius definition (see varRadius argument).}
+prefix to output column names (see return value) with information on rk and
+fixed vs auto radius definition (see varRadius argument). If a fixed radius
+(varRadius=FALSE) then the prefix will be "radiusNN.nnn_\if{html}{\out{<name of column>}}"
+where NN.nnn is the radius value inserted by the user via the \code{rk} argument
+wheras if a variable automatic radius is defined, (varRadius=TRUE) then the
+prefix will be "knnNNN_\if{html}{\out{<name of column>}}"}
 }
 \value{
 matrix with M rows.
