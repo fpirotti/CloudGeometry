@@ -4,7 +4,15 @@
 \alias{calcGF}
 \title{calcGF}
 \usage{
-calcGF(pc3d, rk = 1, varRadius = FALSE, progress = T, verbose = F, threads = 0)
+calcGF(
+  pc3d,
+  rk = 1,
+  varRadius = FALSE,
+  progress = T,
+  verbose = F,
+  threads = 0,
+  autoname = T
+)
 }
 \arguments{
 \item{pc3d}{matrix 3D point cloud in  matrix format with columns
@@ -22,7 +30,7 @@ value.
 be evaluated for the largest starting radius.}
 
 \item{varRadius}{boolean (default is false) - will use a different heuristic
-and will add k-neighbours untile it minimizes the eigenEntropy and fixes the
+and will add k-neighbours until it minimizes the eigenEntropy and fixes the
 radius.}
 
 \item{progress}{a logical boolean (default is TRUE) - if true a progress bar
@@ -34,6 +42,10 @@ lot of messages will be shown.}
 \item{threads}{number of threads. If zero (default) is set, it will use t-2,
 i.e. all threads except 2 if machine has more than 4 threads. Only works if
 CloudGeometry was build with OpenMP support (see documentation)}
+
+\item{autoname}{boolean default is TRUE - autoname will automatically put a
+suffix to output column names (see return value) with information on rk and
+fixed vs auto radius definition (see varRadius argument).}
 }
 \value{
 matrix with M rows.
@@ -66,7 +78,7 @@ Calculate Geometric Features
 }
 \examples{
 #subset the first 100 rows of the lidar point cloud example to limit execution time.
-#nn <- calcGF(lidar,5, FALSE, TRUE, TRUE)
+#nn <- calcGF(lidar,200, T, TRUE, TRUE)
 # ## bind to original table
 # data.table::fwrite( cbind(lidar, nn), "out.csv")
 

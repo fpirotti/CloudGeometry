@@ -21,7 +21,7 @@ NULL
 #' *the varRadius parameter is TRUE*, this is the k nearest neighbours that will
 #' be evaluated for the largest starting radius.
 #' @param varRadius boolean (default is false) - will use a different heuristic
-#' and will add k-neighbours untile it minimizes the eigenEntropy and fixes the
+#' and will add k-neighbours until it minimizes the eigenEntropy and fixes the
 #' radius.
 #' @param progress a logical boolean (default is TRUE) - if true a progress bar
 #' will be shown
@@ -30,6 +30,9 @@ NULL
 #' @param threads number of threads. If zero (default) is set, it will use t-2,
 #' i.e. all threads except 2 if machine has more than 4 threads. Only works if
 #' CloudGeometry was build with OpenMP support (see documentation)
+#' @param autoname  boolean default is TRUE - autoname will automatically put a
+#' suffix to output column names (see return value) with information on rk and
+#' fixed vs auto radius definition (see varRadius argument).
 #' @return matrix with M rows.
 #'
 #' Columns will have  the following geometric features:
@@ -66,7 +69,8 @@ NULL
 #' # ## bind to original table
 #' # data.table::fwrite( cbind(lidar, nn), "out.csv")
 #'
-calcGF <- function(pc3d, rk=1,  varRadius=FALSE, progress=T, verbose=F, threads=0){
+calcGF <- function(pc3d, rk=1,  varRadius=FALSE, progress=T,
+                   verbose=F, threads=0, autoname=T){
 
   if(nrow(pc3d)<4){
     stop("Number of rows/points in matrix are too few: ",
@@ -132,8 +136,11 @@ calcGF <- function(pc3d, rk=1,  varRadius=FALSE, progress=T, verbose=F, threads=
     # gf$fractionizer <- ne[,10]
   }
 
+  if(autoname){
+    if(varRadius) names(gf) <- sprintf("maxKnn%d_%s", rk, names(gf))
+    else  names(gf) <- sprintf("fixRadius%.3f_%s", rk, names(gf))
+  }
   gf
-
 }
 #
 # h <- function(){
