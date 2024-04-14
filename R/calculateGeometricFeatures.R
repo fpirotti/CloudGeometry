@@ -103,7 +103,7 @@ calcGF <- function(pc3d, rk=1,  varRadius=FALSE, progress=T,
   }
 
   if(!is.matrix(pc3d) ){
-    warning("Element is not a matrix, will convert to matrix...")
+    message("Element is not a matrix, will convert to matrix...")
     pc3d <- as.matrix(pc3d)
   }
 
