@@ -199,7 +199,7 @@ arma::mat  nnEigen(arma::mat const &x,
 
   Kdtree::KdNodeVector a = cTree(x, progress);
 
-  if(verbose) REprintf("Creating tree with %llu nodes\n", a.size() );
+  if(verbose) REprintf("Creating tree with %llu nodes\n", (unsigned long long)a.size() );
   Kdtree::KdTree tree(&a, 2, progress);
 
 
@@ -217,7 +217,7 @@ arma::mat  nnEigen(arma::mat const &x,
     return(out);
   }
 
-  if(verbose) REprintf("Finished tree with %llu  nodes\n", tree.allnodes.size() );
+  if(verbose) REprintf("Finished tree with %llu  nodes\n", (unsigned long long)tree.allnodes.size() );
   if(verbose && varRadius) REprintf("Searching nearest points and defining ideal radius with max=%.3f\n", radius );
   if(verbose && !varRadius) REprintf("Searching nearest points around  radius of %.3f ... \n", radius );
 
