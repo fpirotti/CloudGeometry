@@ -8,7 +8,7 @@
 
 The goal of CloudGeometry is fast and parallel computation of geometric features for each point in a point cloud using an auto-adaptive or fixed radius.
 
-Geometric features (GF) catch geometrical patterns around a certain position in 3D space based on information available from the neighboring points (local neighborhood). A feature-rich set of observations support training AI (machine learning and deep learning) models for segmentation and classification.
+Geometric features (GF) catch geometrical patterns around a certain position in 3D space based on information available from the neighboring points (local neighborhood). A feature-rich set of observations support training AI (machine learning and deep learning) models for segmentation and classification [(Pirotti & Tonion, 2019)](#4).
 
 Geometric features can be characterized using the eigenvalues of the 3D structure tensor represented by the 3D covariance matrix derived from the 3D coordinates of all points within the local neighborhood ([Weinmann et al. 2014](#2), [Weinmann et al. 2015](#1)).
 
@@ -69,3 +69,6 @@ More feature descriptors such as Fast Point Feature Histograms (FPFH) as impleme
 <a id="2">[2]</a> Weinmann, M., Jutzi, B., Mallet, C., 2014. Semantic 3D scene interpretation: A framework combining optimal neighborhood size selection with relevant features. ISPRS Annals of the Photogrammetry, Remote Sensing and Spatial Information Sciences II–3, 181–188. <https://doi.org/10.5194/isprsannals-II-3-181-2014>
 
 <a id="3">[3]</a> Brodu, N., Lague, D., 2012. 3D terrestrial lidar data classification of complex natural scenes using a multi-scale dimensionality criterion: Applications in geomorphology. ISPRS Journal of Photogrammetry and Remote Sensing 68, 121–134. <https://doi.org/10.1016/j.isprsjprs.2012.01.006>
+
+<a id="4">[4]</a>Pirotti, F., Tonion, F., 2019. Classification of aerial laser scanning point clouds using machine learning: a comparison between random forest and tensorflow. ISPRS - International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences XLII-2/W13, 1105–1111. https://doi.org/10.5194/isprs-archives-XLII-2-W13-1105-2019
+
