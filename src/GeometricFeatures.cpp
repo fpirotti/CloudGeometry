@@ -110,8 +110,7 @@ int  nn(int idr,
     }
 
     eigval = tempeigval;
-    eigvec = tempeigvec;
-    eigenSum  = arma::sum(eigval);
+    eigvec = tempeigvec; 
     out(idr,7)=finalRadius;
 
 
@@ -120,20 +119,44 @@ int  nn(int idr,
     if(result.n_rows<4){
       return result.n_rows;
     }
-    eig_sym(eigval, eigvec,  arma::cov( result.cols(0,2) ));
-    eigenSum  = arma::sum(eigval);
+    eig_sym(eigval, eigvec,  arma::cov( result.cols(0,2) )); 
     out(idr,5) = result.n_rows;
   }
 
-    // avoid log -inf adding a tiny amount
-    out(idr,0) = eigval.at(2);
-    out(idr,1) = eigval.at(1);
-    out(idr,2) = eigval.at(0);
-    out(idr,3) = eigenSum;
+  // Somma degli autovalori
+eigenSum = arma::sum(eigval);
 
-    eigval = eigval /  eigenSum;
-    verticality = acos( 1 - dot( eigvec.col(0),vertical)/eigval.at(0) ) / arma::datum::pi * 180.0 ;
+// Salvo gli autovalori e la somma nel vettore di output
+out(idr, 0) = eigval.at(2);  // λ3: max
+out(idr, 1) = eigval.at(1);  // λ2: medio
+out(idr, 2) = eigval.at(0);  // λ1: min
+out(idr, 3) = eigenSum;
 
+// Normalizzazione degli autovalori
+if (eigenSum > 0) {
+    eigval = eigval / eigenSum;
+} else {
+    eigval.fill(0.0);  // prevenire NaN se somma è zero
+}
+double denominator = eigval.at(0);
+double cosArg, dotProd;
+if (denominator > 1e-8) {
+    // Prodotto scalare tra il primo autovettore (direzione meno dominante) e la verticale
+    dotProd = arma::dot(eigvec.col(0), vertical);
+
+    // Calcolo del valore da passare ad acos
+    cosArg = 1.0 - dotProd / denominator;
+
+    // Clamping tra -1 e 1 per sicurezza numerica
+    cosArg = std::max(-1.0, std::min(1.0, cosArg));
+
+    // Conversione in gradi
+    verticality = std::acos(cosArg) / arma::datum::pi * 180.0;
+} else {
+    // Se l'autovalore è troppo piccolo, non si può fare una stima stabile della verticalità
+    verticality = 0.0;
+}
+  
     eigenEntropy  = ( -1.0*eigval.at(0)*log( (eigval.at(0)+0.00000000001) )
                           -eigval.at(1)*log( (eigval.at(1)+0.00000000001) )
                           -eigval.at(2)*log( (eigval.at(2)+0.00000000001) ) );
