@@ -1,0 +1,6 @@
+@echo off
+REM Check if pkgbuild is installed
+Rscript -e "if (!requireNamespace('pkgbuild', quietly=TRUE)) { message('ERROR: install pkgbuild package'); quit(status=1)"
+
+REM Check for Rtools
+Rscript -e "if (!pkgbuild::has_build_tools(debug=FALSE)) { message('ERROR: Rtools not detected. Please install Rtools from https://cran.r-project.org/bin/windows/Rtools/'); quit(status=1) }"
