@@ -1,5 +1,8 @@
-#!/bin/sh
-if ! Rscript -e "pkgbuild::has_build_tools(debug=FALSE)" ; then
-  echo "⚠️ Rtools not found. Please install it from https://cran.r-project.org/bin/windows/Rtools/"
-  exit 1
-fi
+:: configure.win - Windows install-time check for Rtools
+
+@echo off
+REM Check if pkgbuild is installed
+Rscript -e "if (!requireNamespace('pkgbuild', quietly=TRUE)) quit(status=1)"
+
+REM Check for Rtools
+Rscript -e "if (!pkgbuild::has_build_tools(debug=FALSE)) { message('ERROR: Rtools not detected. Please install Rtools from https://cran.r-project.org/bin/windows/Rtools/'); quit(status=1) }"
