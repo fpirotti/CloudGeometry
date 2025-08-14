@@ -46,10 +46,12 @@ CloudGeometry was build with OpenMP support (see documentation)}
 \item{autoname}{boolean default is TRUE - autoname will automatically put a
 prefix to output column names (see return value) with information on rk and
 fixed vs auto radius definition (see varRadius argument). If a fixed radius
-(varRadius=FALSE) then the prefix will be "radiusNN.nnn_\if{html}{\out{<name of column>}}"
+(varRadius=FALSE) then the prefix will be "rNN.nn_\if{html}{\out{<name of column>}}"
 where NN.nnn is the radius value inserted by the user via the \code{rk} argument
-wheras if a variable automatic radius is defined, (varRadius=TRUE) then the
-prefix will be "knnNNN_\if{html}{\out{<name of column>}}"}
+wheras if a variable automatic radius is defined (varRadius=TRUE) then the
+prefix will be "kNNN_\if{html}{\out{<name of column>}}" where NNN is the value of
+the \code{rk} argument, in this case the maximum initial number of nearest
+neighbours to set the largest radius.}
 }
 \value{
 matrix with M rows.

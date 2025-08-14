@@ -38,10 +38,12 @@ The following geometric features are currently implemented:
 ## Installation
 
 You can install the development version of CloudGeometry from [GitHub](https://github.com/) with:
-
+If you are in windows please install [Rtools]("https://cran.r-project.org/bin/windows/Rtools/"")!
 ``` r
+
 # install.packages("devtools")
 devtools::install_github("fpirotti/CloudGeometry")
+
 ```
 
 ## Example
