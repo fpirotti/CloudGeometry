@@ -2,8 +2,8 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/fpirotti/CloudGeometry/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/fpirotti/CloudGeometry/actions/workflows/R-CMD-check.yaml) [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![CRAN status](https://www.r-pkg.org/badges/version/CloudGeometry)](https://CRAN.R-project.org/package=CloudGeometry)
+[![R-CMD-check](https://github.com/fpirotti/CloudGeometry/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/fpirotti/CloudGeometry/actions/workflows/R-CMD-check.yaml) [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental) [![CRAN status](https://www.r-pkg.org/badges/version/CloudGeometry)](https://CRAN.R-project.org/package=CloudGeometry)
+
 <!-- badges: end -->
 
 The goal of CloudGeometry is fast and parallel computation of geometric features for each point in a point cloud using an auto-adaptive or fixed radius.
@@ -37,13 +37,16 @@ The following geometric features are currently implemented:
 
 ## Installation
 
-You can install the development version of CloudGeometry from [GitHub](https://github.com/) with:
-If you are in windows please install [Rtools]("https://cran.r-project.org/bin/windows/Rtools/")!
+[**If you are in windows please install**]{.underline} [Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) first!
+
+You can install the development version of CloudGeometry from [GitHub](https://github.com/) 
+with:
+
+
 ``` r
 
 # install.packages("devtools")
 devtools::install_github("fpirotti/CloudGeometry")
-
 ```
 
 ## Example
@@ -72,5 +75,4 @@ More feature descriptors such as Fast Point Feature Histograms (FPFH) as impleme
 
 <a id="3">[3]</a> Brodu, N., Lague, D., 2012. 3D terrestrial lidar data classification of complex natural scenes using a multi-scale dimensionality criterion: Applications in geomorphology. ISPRS Journal of Photogrammetry and Remote Sensing 68, 121–134. <https://doi.org/10.1016/j.isprsjprs.2012.01.006>
 
-<a id="4">[4]</a>Pirotti, F., Tonion, F., 2019. Classification of aerial laser scanning point clouds using machine learning: a comparison between random forest and tensorflow. ISPRS - International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences XLII-2/W13, 1105–1111. https://doi.org/10.5194/isprs-archives-XLII-2-W13-1105-2019
-
+<a id="4">[4]</a>Pirotti, F., Tonion, F., 2019. Classification of aerial laser scanning point clouds using machine learning: a comparison between random forest and tensorflow. ISPRS - International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences XLII-2/W13, 1105–1111. <https://doi.org/10.5194/isprs-archives-XLII-2-W13-1105-2019>
