@@ -1,5 +1,3 @@
-:: configure.win - Windows install-time check for Rtools
-
 @echo off
 REM Check if pkgbuild is installed
 Rscript -e "if (!requireNamespace('pkgbuild', quietly=TRUE)) quit(status=1)"
